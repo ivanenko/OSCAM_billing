@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    {% if object.is_staff %}
+        Dealer Details
+    {% else %}
+        User Details
+    {% endif %}
+{% endblock page_title %}
+
+{% block content %}
+    <table width="200px">
+        <tr>
+            <td><b>Username</b></td>
+            <td>{{ object.username }}</td>
+        </tr>
+        <tr {% if not object.is_active %} class="bg-danger" {% endif %}>
+            <td><b>Active?</b></td>
+            <td>{% if object.is_active %} Yes {% else %} No {% endif %}</td>
+        </tr>
+        {% if object.is_staff %}
+            <tr>
+                <td><b>Comission</b></td>
+                <td>{{ object.userprofile.comission }}</td>
+            </tr>
+            <tr>
+                <td><b>Number of users</b></td>
+                <td>{{ dealer_user_count }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td><b>Dealer</b></td>
+                <td><a href="{% url 'user_details' object.userprofile.dealer.pk %}">{{ object.userprofile.dealer.username }}</a></td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td><b>Email</b></td>
+            <td>{{ object.email }}</td>
+        </tr>
+        <tr>
+            <td><b>Notes</b></td>
+            <td>{{ object.userprofile.notes }}</td>
+        </tr>
+    </table>
+
+    <br/>
+    {% if object.is_staff %}
+        <h3>Dealer Users</h3>
+        <table class="table">
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Active</th>
+                <th>Action</th>
+            </tr>
+            {% for user in dealer_user_list %}
+                <tr {% if not user.is_active %}class="danger"{% endif %}>
+                    <td>{{ user.pk }}</td>
+                    <td><a href="{% url 'user_details' user.pk %}">{{ user.username }}</a></td>
+                    <td>{{ user.userprofile.open_password }}</td>
+                    <td>{{ user.date_joined|date }}</td>
+                    <td>
+                        {% if user.is_active %}
+                            <a href="{% url 'deactivate_user' user.pk %}">Deactivate</a>
+                        {% else %}
+                            <a href="{% url 'activate_user' user.pk %}">Activate</a>
+                        {% endif %}
+                        <a href="{% url 'remove_user' user.pk %}">Remove</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h3>User Packages</h3>
+        {% if not_used_packages %}
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form class="form-inline" action="{% url 'add_package_to_user' object.pk %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                        <label for="selectPackage">Add new package</label>
+                        <select class="form-control" id="selectPackage" name="selected_package">
+                            {% for package in not_used_packages %}
+                                <option value="{{ package.pk }}">{{ package.name }}</option>
+                            {% endfor %}
+                        </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+        <table class="table">
+            <tr>
+                <th>ID</td>
+                <td>Name</td>
+                <td>field</td>
+                <td>Action</td>
+            </tr>
+            {% for package in object.userprofile.packages.all %}
+                <tr>
+                    <td>{{ package.pk }}</td>
+                    <td>{{ package.name }}</td>
+                    <td>{{ package.field2 }}</td>
+                    <td><a href="{% url 'remove_package' package.pk %}" class="remove-confirmation">Remove</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <br/>
+        <h3>User Payments</h3>
+        User ballance, ... <br/>
+        <a href="#">make payment manually</a> <br/>
+        <a href="#">see all user payments</a>
+    {% endif %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="remove_confirmation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Warning</h4>
+          </div>
+          <div class="modal-body">
+              <span id="link" class="hidden"></span>
+              This package will be removed, continue?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="yes">Yes</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'js/user_details.js' %}"></script>
+{% endblock extra_js %}

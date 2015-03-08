@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}Create User{% endblock page_title %}
+
+{% block content %}
+    <form action="{% url 'create_user' %}" method="post" style="width: 400px;">
+          {% crispy user_form %}
+		</form>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'js/create_user.js' %}"></script>
+{% endblock extra_js %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Wellcome to xpressCredit{% endblock title %}
+
+{% block page_title %}Hello {{ user.username }}{% endblock page_title %}
+
+{% block content %}
+	<a href="{% url 'create_product' %}">Create Product</a>
+	
+{% endblock content %}	

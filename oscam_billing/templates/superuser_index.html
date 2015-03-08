@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block page_title %}Wellcome to OSCAM Billing - Admin{% endblock page_title %}
+
+{% block content %}
+	<p>Dealer List:</p>
+    <a href="{% url 'create_user' %}">Create user</a>
+    <br/>
+    <a href="{% url 'user_list' %}">User list</a>
+
+{% endblock content %}

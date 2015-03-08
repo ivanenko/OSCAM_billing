@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Wellcome to billing{% endblock title %}
+
+{% block page_title %}Login page{% endblock page_title %}
+
+{% block content %}
+	<p>Login please</p>
+	<div style="width:400px;">
+		<form action="{% url 'login' %}" method="post">
+		  {% csrf_token %}
+		  {{  form | crispy }}
+          <input type="hidden" name="next" value="{{ next }}" />
+		  <input type="submit" value="Login">
+		</form>
+	</div>
+{% endblock content %}	

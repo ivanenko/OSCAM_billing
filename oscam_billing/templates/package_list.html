@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}Package List{% endblock page_title %}
+
+{% block content %}
+    <div style="width:440px;" class="panel panel-default">
+        <div class="panel-heading">Create new package</div>
+        <div class="panel-body">
+            <form action="{% url 'create_package' %}" method="post" style="width: 400px;">
+                {% csrf_token %}
+                {{  create_package_form | crispy }}
+                <input type="submit" value="Create" class="btn btn-primary">
+            </form>
+        </div>
+    </div>
+    <br/>
+
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Package Name</th>
+            <th>Field1</th>
+            <th>Field2</th>
+            <th>Price</th>
+            <th>Actions</th>
+        </tr>
+        {% for package in object_list %}
+            <tr>
+                <td>{{ package.pk }}</td>
+                <td>{{ package.name }}</td>
+                <td>{{ package.field2 }}</td>
+                <td>{{ package.field3 }}</td>
+                <td>111</td>
+                <td>
+                    <a href="{% url 'remove_package' package.pk %}" class="remove-confirmation">Remove</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% if is_paginated %}
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                        <a href="{% url 'package_list' %}?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="{% url 'package_list' %}?page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="remove_confirmation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Warning</h4>
+          </div>
+          <div class="modal-body">
+              <span id="link" class="hidden"></span>
+              This package will be removed, continue?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="yes">Yes</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock content %}

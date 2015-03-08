@@ -1,0 +1,6 @@
+env/
+*.pyc
+.idea
+django.logs
+*.log
+wsgi.*

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}User List{% endblock page_title %}
+
+{% block content %}
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>User Name</th>
+            <th>Password</th>
+            <th>Date registered</th>
+            <th>Role</th>
+            <th>Dealer</th>
+            <th>Active</th>
+            <th>Actions</th>
+        </tr>
+        {% for user in object_list %}
+            <tr {% if not user.is_active %}class="danger"{% endif %}>
+                <td>{{ user.pk }}</td>
+                <td><a href="{% url 'user_details' user.pk %}">{{ user.username }}</a></td>
+                <td>{{ user.userprofile.open_password }}</td>
+                <td>{{ user.date_joined|date }}</td>
+                <td>
+                    {% if user.is_superuser %}
+                        Superuser
+                    {% elif user.is_staff %}
+                        Dealer
+                    {% else %}
+                        User
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.userprofile  %}
+                        <a href="{% url 'user_details' user.userprofile.dealer.pk %}">{{ user.userprofile.dealer.username }}</a>
+                    {% endif %}
+                </td>
+                <td>{% if user.is_active %} Active {% else %} Not active {% endif %}</td>
+                <td>
+                    {% if user.is_active %}
+                        <a href="{% url 'deactivate_user' user.pk %}">Deactivate</a>
+                    {% else %}
+                        <a href="{% url 'activate_user' user.pk %}">Activate</a>
+                    {% endif %}
+                    <a href="{% url 'remove_user' user.pk %}" class="remove-confirmation">Remove</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% if is_paginated %}
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="{% url 'user_list' %}?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="{% url 'user_list' %}?page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="remove_confirmation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Warning</h4>
+          </div>
+          <div class="modal-body">
+              <span id="link" class="hidden"></span>
+              This user will be removed, continue?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="yes">Yes</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'js/user_list.js' %}"></script>
+{% endblock extra_js %}
