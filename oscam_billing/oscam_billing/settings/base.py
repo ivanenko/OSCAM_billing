@@ -105,7 +105,7 @@ INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 
 ROOT_URLCONF = 'oscam_billing.urls'
 
-WSGI_APPLICATION = 'oscam_billing.wsgi.application'
+WSGI_APPLICATION = 'oscam_billing.wsgi1.application'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

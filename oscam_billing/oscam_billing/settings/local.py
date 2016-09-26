@@ -47,6 +47,6 @@ USE_L10N = True
 USE_TZ = True
 
 INSTALLED_APPS += (
-    'debug_toolbar',
+    #'debug_toolbar',
 )
 
