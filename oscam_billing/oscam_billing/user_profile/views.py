@@ -1,5 +1,5 @@
 from billing.models import Package
-from forms import CreateUserForm
+from .forms import CreateUserForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
